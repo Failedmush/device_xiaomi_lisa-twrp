@@ -1,11 +1,11 @@
 #
-# Copyright (C) 2021 The TWRP Open Source Project
+# Copyright (C) 2019 The TwrpBuilder Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,105 +14,145 @@
 # limitations under the License.
 #
 
-DEVICE_PATH := device/xiaomi/lisa
-
-# For building with minimal manifest
-ALLOW_MISSING_DEPENDENCIES := true
-BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
-BUILD_BROKEN_PREBUILT_ELF_FILES := true
-BUILD_BROKEN_DUP_RULES := true
-
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_ABI2 := 
-TARGET_CPU_VARIANT := generic
-TARGET_CPU_VARIANT_RUNTIME := kryo300
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := kryo
+TARGET_CPU_VARIANT_RUNTIME := kryo680
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_ARCH_VARIANT := $(TARGET_ARCH_VARIANT)
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := generic
-TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a75
+TARGET_2ND_CPU_VARIANT := $(TARGET_CPU_VARIANT)
+TARGET_2ND_CPU_VARIANT_RUNTIME := $(TARGET_CPU_VARIANT_RUNTIME)
 
-# APEX
-DEXPREOPT_GENERATE_APEX_IMAGE := true
+ENABLE_CPUSETS := true
+ENABLE_SCHEDBOOST := true
 
 # Bootloader
-TARGET_BOOTLOADER_BOARD_NAME := lisa
+PRODUCT_PLATFORM := lahaina
+TARGET_BOOTLOADER_BOARD_NAME := $(PRODUCT_RELEASE_NAME)
 TARGET_NO_BOOTLOADER := true
-
-# Kernel
-BOARD_KERNEL_BASE := 0x00000000
-BOARD_KERNEL_IMAGE_NAME := Image
-BOARD_KERNEL_PAGESIZE := 4096
-
-BOARD_KERNEL_SEPARATED_DTBO := true
-BOARD_BOOT_HEADER_VERSION := 3
-BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
-
-BOARD_KERNEL_CMDLINE += androidboot.console=ttyMSM0
-BOARD_KERNEL_CMDLINE += androidboot.hardware=qcom
-BOARD_KERNEL_CMDLINE += androidboot.memcg=1
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
-BOARD_KERNEL_CMDLINE += androidboot.usbcontroller=a600000.dwc3
-BOARD_KERNEL_CMDLINE += cgroup.memory=nokmem,nosocket
-BOARD_KERNEL_CMDLINE += console=ttyMSM0,115200n8
-BOARD_KERNEL_CMDLINE += earlycon=msm_geni_serial,0x880000
-BOARD_KERNEL_CMDLINE += ip6table_raw.raw_before_defrag=1
-BOARD_KERNEL_CMDLINE += iptable_raw.raw_before_defrag=1
-BOARD_KERNEL_CMDLINE += lpm_levels.sleep_disabled=1
-BOARD_KERNEL_CMDLINE += msm_rtb.filter=0x237
-BOARD_KERNEL_CMDLINE += pcie_ports=compat
-BOARD_KERNEL_CMDLINE += service_locator.enable=1
-BOARD_KERNEL_CMDLINE += swiotlb=0
-BOARD_KERNEL_CMDLINE += video=vfb:640x400,bpp=32,memsize=3072000
-
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
-BOARD_MKBOOTIMG_ARGS += --dtb $(DEVICE_PATH)/prebuilt/dtb.img
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image.gz-dtb
-
-# Partitions
-BOARD_FLASH_BLOCK_SIZE := 131072
-BOARD_USES_METADATA_PARTITION := true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 201326592
-BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 100663296
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-TARGET_COPY_OUT_VENDOR := vendor
-
-# Dynamic Partiton
-BOARD_SUPER_PARTITION_SIZE := 9126805504
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9126805504
-BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system system_ext product vendor odm
+TARGET_USES_UEFI := true
 
 # Platform
-BOARD_USES_QCOM_HARDWARE := true
-TARGET_BOARD_PLATFORM := lahaina
+TARGET_BOARD_PLATFORM := xiaomi_sm8350
+TARGET_BOARD_PLATFORM_GPU := qcom-adreno660
+QCOM_BOARD_PLATFORMS += xiaomi_sm8350
 
-# Properties
-TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
+# Kernel
+VENDOR_CMDLINE := "console=ttyMSM0,115200n8 androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 androidboot.usbcontroller=a600000.dwc3 swiotlb=0 loop.max_part=7 cgroup.memory=nokmem,nosocket pcie_ports=compat iptable_raw.raw_before_defrag=1 ip6table_raw.raw_before_defrag=1 reboot=panic_warm androidboot.init_fatal_reboot_target=recovery androidboot.selinux=permissive"
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_KERNEL_BASE          := 0x00000000
+TARGET_KERNEL_ARCH := arm64
+TARGET_KERNEL_HEADER_ARCH := arm64
+TARGET_KERNEL_CLANG_COMPILE := true
+BOARD_KERNEL_IMAGE_NAME := Image
+BOARD_BOOT_HEADER_VERSION := 3
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(PRODUCT_RELEASE_NAME)/kernel
 
-# Recovery
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_USE_F2FS := true
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+BOARD_MKBOOTIMG_ARGS += --vendor_cmdline $(VENDOR_CMDLINE)
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE) --board ""
+
+
+# Kenel dtb
+# BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/$(PRODUCT_RELEASE_NAME)/dtb
+BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
+
+# Kenel dtbo
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/$(PRODUCT_RELEASE_NAME)/dtbo.img
+
+#A/B
+BOARD_USES_RECOVERY_AS_BOOT := true
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+AB_OTA_UPDATER := true
+
+AB_OTA_PARTITIONS += \
+    boot \
+    dtbo \
+    odm \
+    product \
+    system \
+    system_ext \
+    vbmeta \
+    vbmeta_system \
+    vendor \
+    vendor_boot
+
+# QCOM
+#TARGET_USE_SDCLANG := true
+
+# Kernel modules
+#BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilt/$(PRODUCT_RELEASE_NAME)/modules/5.4-gki/modules.load))
+#BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD := $(strip $(shell cat $(DEVICE_PATH)/prebuilt/$(PRODUCT_RELEASE_NAME)/modules/5.4-gki/modules.load))
+#NEED_KERNEL_MODULE_RECOVERY := true
+
+# Avb
+BOARD_AVB_ENABLE := true
+
+# Partitions
+BOARD_BOOTIMAGE_PARTITION_SIZE := 201326592
+
+# Dynamic Partition
+BOARD_SUPER_PARTITION_SIZE := 9126805504
+BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
+# BOARD_QTI_DYNAMIC_PARTITIONS_SIZ=BOARD_SUPER_PARTITION_SIZE - 4MB
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9122611200
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := product vendor system system_ext odm
 
 # System as root
 BOARD_ROOT_EXTRA_FOLDERS := bluetooth dsp firmware persist
 BOARD_SUPPRESS_SECURE_ERASE := true
 
-# Verified Boot
-BOARD_AVB_ENABLE := true
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
-BOARD_AVB_VBMETA_SYSTEM := system system_ext product
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+# File systems
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
 
+# Workaround for error copying vendor files to recovery ramdisk
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+TARGET_COPY_OUT_VENDOR := vendor
+
+#Init
+TARGET_INIT_VENDOR_LIB := //$(DEVICE_PATH):libinit_venus
+TARGET_RECOVERY_DEVICE_MODULES := libinit_venus
+TARGET_PLATFORM_DEVICE_BASE := /devices/soc/
+
+# Recovery
+BOARD_HAS_LARGE_FILESYSTEM := true
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+
+ALLOW_MISSING_DEPENDENCIES := true
+
+# Crypto
+BOARD_USES_QCOM_FBE_DECRYPTION := true
+BOARD_USES_METADATA_PARTITION := true
+ifdef DECRYPT_PLATFORM_VERSION
+PLATFORM_VERSION := $(DECRYPT_PLATFORM_VERSION)
+else
+PLATFORM_VERSION := 16
+endif
+PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
+PLATFORM_SECURITY_PATCH := 2099-12-31
+VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+BOOT_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
+TW_USE_FSCRYPT_POLICY := 2
+
+# Network
+BUILD_BROKEN_USES_NETWORK := true
+
+# Tool
+TW_INCLUDE_REPACKTOOLS := true
+TW_INCLUDE_RESETPROP := true
+TW_INCLUDE_LIBRESETPROP := true
+			     
 # TWRP Configuration
 TW_THEME := portrait_hdpi
 RECOVERY_SDCARD_ON_DATA := true
@@ -141,8 +181,3 @@ TW_DEFAULT_EXTERNAL_STORAGE := true
 #TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
 #TW_EXTERNAL_STORAGE_PATH := "/external_sd"
 #TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
-
-# TWRP Debug Flags
-# TWRP_EVENT_LOGGING := true
-TWRP_INCLUDE_LOGCAT := true
-TARGET_USES_LOGD := true
